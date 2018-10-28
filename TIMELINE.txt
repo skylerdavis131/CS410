@@ -1,0 +1,20 @@
+tuesday oct 30: 
+	Understand all suggested functions and read through Kerf's code. Come to class or his ofice hours with any questions. 
+
+thursday Nov 1st: 
+	Jack & Skyler: understand parallel coding and be ready ask questions. 
+	Jack: understand using threads for parallel programming
+	Skyler: Understand using processes for parallel programming
+
+tuesday 6th:
+	Jack & Skyler: Be started on shell - Hopefully completed - go to office hours to get help if needed.
+
+	Skyler: Be started on multi-proccess script - definitly be able to read matricies from stdin or from file. Begin to understand how to parallel code with multiple processes.
+
+	Jack: Be started on multi-thread script - definitly be able to read matricies from stdin or from file. Begin to understand how to parallel code with multiple processes.
+
+thursday nov 9th:
+	Have the formatter function working. Work on this whenever the rest of the assignment makes you want to throw your computer at a brick wall. 
+
+Tuesday nov 13th:
+	Be putting on the final touches to the code. It is due in two days.
