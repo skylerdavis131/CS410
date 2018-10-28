@@ -1,2 +1,2 @@
-# matmult_p function
-# multiple processes 
+// matmult_p function
+// multiple processes 
