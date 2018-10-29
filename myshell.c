@@ -68,17 +68,10 @@ int main(){
 		}
 		printf("\n");
 
-/*
-		printf("First Arg: %s\n", args[0]);
-		int i = 0;
-		while (1){
-			if (args[0][i] == '\0'){
-				printf("found null at i = %d\n", i);
-				break;
-			}
-			i++;
-		}
-*/
+		/*
+		const char* s = getenv("PATH");
+		printf("PATH :%s\n",(s!=NULL)? s : "getenv returned NULL");
+		*/
 		executeStat = myExec(args, numArgs);
 
 

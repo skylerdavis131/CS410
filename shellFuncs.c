@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "shellFuncs.h"
 
@@ -175,7 +176,7 @@ int	myExec(char** args, int numArgs)
 
 	pid = fork();
 	if (pid == 0){
-		if(execv(args[0], args) < 0){
+		if(execvp(args[0], args) < 0){
 			printf("could not run: %s\n", args[0]);
 			exit(1);
 		}
