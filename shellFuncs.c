@@ -16,7 +16,9 @@
 
 #include "shellFuncs.h"
 
-#define NORMAL_BUFFSIZE 1024;
+extern int* childID;
+extern int numChildren;
+
 
 
 /*
@@ -52,6 +54,7 @@ char* getCommand(void)
 			  buffer and exit successfully*/
 			printf("\n");
 			free(lineBuff);
+			free(childID);
 			exit(1);
 		}
 		else if (c == '\n'){
@@ -96,7 +99,7 @@ char** myParse(char* line, int* numArgs){
 	  with space that is more than enough to avoid any memory coruption:
 	  each token must be <= lineLen,and there must be <= lineLen tokens,
 	  based on the limits of a line size*/
-	lineLen = strlen(line);
+	lineLen = strlen(line) + 1;
 	args = (char**)malloc(lineLen * sizeof(char*));
 	memset(args, 0, (lineLen * sizeof(char*)));
 	for(i=0; i<lineLen; i++){
@@ -104,14 +107,15 @@ char** myParse(char* line, int* numArgs){
 		memset(args[i], 0, (lineLen * sizeof(char*)));
 	}
 
+
 	position = 0;
 	while(line[position] == ' '){
 		/*trim off any leading white space*/
 		position++;
 	}
 
-	i = 0; //token string
-	j = 0; //which token
+	i = 0; //which token
+	j = 0; //offset into token string
 	while(line[position] != '\0'){
 		(*numArgs)++;
 		/*get and store the token*/
@@ -119,7 +123,21 @@ char** myParse(char* line, int* numArgs){
 			args[i][j] = line[position];
 			position++;
 			j++;
+
+			if(line[position] == ';'){
+				/* ';' is a token */
+				j = 0;
+				i++;
+				args[i][j] = line[position];
+				j++;
+				(*numArgs)++;
+				position++;
+				break;
+			}
 		}
+		args[i][j] = '\0';
+
+
 
 		/*make sure we are not at the end of the line*/
 		if( line[position] == '\0' ){
@@ -128,12 +146,13 @@ char** myParse(char* line, int* numArgs){
 
 		j = 0; /*done with first token. reset token offset to zero*/
 		i++; /*next token*/
+
 		while( line[position] == ' ' && line[position != '\0' ]){
 			/*move to next token*/
 			position++;
 		}
 
-		/*check again to make sure we arent at the end of te line*/
+		/*check again to make sure we arent at the end of the line*/
 		if ( line[position] == '\0' ){
 			break;
 		}
@@ -142,6 +161,37 @@ char** myParse(char* line, int* numArgs){
 	return args;
 }
 
+
+/*
+README: myExec()
+	+ This function takes in an array of string arguments and the number
+		of arguments, then executes the argument commands as needed.
+	+ Program will return the status of the execution.
+*/
+int	myExec(char** args, int numArgs)
+{
+	pid_t pid;
+	int status;
+
+	pid = fork();
+	if (pid == 0){
+		if(execv(args[0], args) < 0){
+			printf("could not run: %s\n", args[0]);
+			exit(1);
+		}
+	}
+	else{
+
+		do{
+			waitpid(pid, &status, WUNTRACED);
+		} while( !WIFEXITED(status) && !WIFSIGNALED(status));
+
+		//printf("parent: %d\n", getpid());
+		
+	}
+
+	return 0;
+}
 
 
 

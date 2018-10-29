@@ -14,6 +14,10 @@
 
 #include "shellFuncs.h"
 
+/*global variables to keep track of childID's*/
+int* childID;
+int numChildren;
+
 
 int main(){
 	/*main functions of the shell:
@@ -22,24 +26,60 @@ int main(){
 		3) Execute Command
 	*/
 
+	/*define variables*/
 	char* input;
 	char** args;
 	int i, numArgs;
 	int* numArgs_p;
+	int executeStat;
 
+
+	/*set up the golobal childID array to hold the 
+	  process id's of the child processes*/
+	numChildren = 512;
+	childID = malloc(sizeof(int) * numChildren);
+	memset(childID, 0, sizeof(int)* numChildren);
+
+
+
+	/*shell loop | exits when user types ctrl+d*/
 	while(1){
 		input = getCommand();
 
+		/*make a pointer to numArgs so it can 
+		  be incremented inside of the myParse Function*/
 		numArgs = 0;
 		numArgs_p = &numArgs;
+
+
 		args = myParse(input, numArgs_p);
 
+		/*echo the arguments*/
 		int i, j;
+		int lineLen = strlen(input) + 1;
 		for(i = 0;i < numArgs; i++ ){
-			printf("%s\n", args[i]);
+			printf("%s with null at index: ", args[i]);
+			for(j = 0; j < lineLen; j++ ){
+				if (args[i][j] == '\0'){
+					printf("%d\n", j);
+					break;
+				}
+			}
 		}
+		printf("\n");
 
-
+/*
+		printf("First Arg: %s\n", args[0]);
+		int i = 0;
+		while (1){
+			if (args[0][i] == '\0'){
+				printf("found null at i = %d\n", i);
+				break;
+			}
+			i++;
+		}
+*/
+		executeStat = myExec(args, numArgs);
 
 
 
