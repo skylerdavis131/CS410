@@ -20,6 +20,7 @@
 extern int* childID;
 extern int numChildren;
 
+extern char** environ;
 
 
 /*
@@ -176,7 +177,7 @@ int	myExec(char** args, int numArgs)
 
 	pid = fork();
 	if (pid == 0){
-		if(execvp(args[0], args) < 0){
+		if(execve(args[0], args, environ) < 0){
 			printf("could not run: %s\n", args[0]);
 			exit(1);
 		}

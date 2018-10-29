@@ -55,7 +55,7 @@ int main(){
 		args = myParse(input, numArgs_p);
 
 		/*echo the arguments*/
-		int i, j;
+/*		int i, j;
 		int lineLen = strlen(input) + 1;
 		for(i = 0;i < numArgs; i++ ){
 			printf("%s with null at index: ", args[i]);
@@ -67,11 +67,8 @@ int main(){
 			}
 		}
 		printf("\n");
-
-		/*
-		const char* s = getenv("PATH");
-		printf("PATH :%s\n",(s!=NULL)? s : "getenv returned NULL");
-		*/
+		
+*/
 		executeStat = myExec(args, numArgs);
 
 
