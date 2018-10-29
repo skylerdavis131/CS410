@@ -2,3 +2,5 @@ Does our shell need to know how to compile the matmult_p.c and matmult_t.c progr
 
 How do we read control-c and control-d as inputs?
 	-Always be checking for these in the shell when a process is running and then if they occure send the desired actions to the processes?
+
+test q
