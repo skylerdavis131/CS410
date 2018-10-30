@@ -46,6 +46,18 @@ int main(){
 	while(1){
 		input = getCommand();
 
+		//simple exit check. Should I delete this?
+		if( strcmp(input, "exit") == 0 ){
+			free(input);
+			free(childID);
+			exit(0);
+		}
+		else if ( strcmp( input, "clear" ) == 0 ){
+			system("clear");
+			free(input);
+			continue;
+		}
+
 		/*make a pointer to numArgs so it can 
 		  be incremented inside of the myParse Function*/
 		numArgs = 0;

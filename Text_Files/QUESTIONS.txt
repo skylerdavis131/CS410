@@ -1,4 +1,5 @@
 Does our shell need to know how to compile the matmult_p.c and matmult_t.c programs or will these functions already be compiled before running the shell program?
 
-How do we read control-c and control-d as inputs?
-	-Always be checking for these in the shell when a process is running and then if they occure send the desired actions to the processes?
+Can we assume that EOF is one its own line when input to myshell is piped from another file, or should we check for this?
+
+Why can't I just use execvp instead of execve?

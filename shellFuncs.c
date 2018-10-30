@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "shellFuncs.h"
 
@@ -32,6 +33,7 @@ README: getCommand()
 */
 char* getCommand(void)
 {
+	int errnum;
 	int c;
 	int index = 0;
 	int buffsize = NORMAL_BUFFSIZE;
@@ -39,13 +41,15 @@ char* getCommand(void)
 
 	/*alocate space for the buffer*/
 	if(!(lineBuff = malloc(buffsize))){
-		fprintf(stderr, "Allocation for lineBuff failed\n");
+		errnum = errno;
+		fprintf(stderr, "Allocation for lineBuff failed | %s\n", strerror(errnum));
 		exit(1);
 	}
 	memset(lineBuff, 0, buffsize);
 
 	/*Shell prompt*/
-	printf("myshell> ");
+	if(isatty(STDIN_FILENO))
+		printf("myshell> ");
 
 	/*get the line and check for termination & buffer overflow*/
 	while(1){
@@ -54,10 +58,21 @@ char* getCommand(void)
 		if (c == EOF){ 
 			/*ctrl-d was detected so we should free the 
 			  buffer and exit successfully*/
+			if(!isatty(STDIN_FILENO)){
+				if(index == 0){
+					free(lineBuff);
+					free(childID);
+					exit(0);
+				}
+				else{
+					/*we must do some stuff before exiting*/
+					/*can we assume that the EOF will be on its own line?*/
+				}
+			}
 			printf("\n");
 			free(lineBuff);
 			free(childID);
-			exit(1);
+			exit(0);
 		}
 		else if (c == '\n'){
 			lineBuff[index] = '\0';
@@ -73,7 +88,8 @@ char* getCommand(void)
 		if(index >= buffsize){
 			buffsize = buffsize + NORMAL_BUFFSIZE;
 			if(!(lineBuff = realloc(lineBuff, buffsize))){
-				fprintf(stderr, "Reallocation of lineBuff failed\n");
+				errnum = errno;
+				fprintf(stderr, "Reallocation of lineBuff failed | %s\n", strerror(errnum));
 				exit(1);
 			}
 		}
@@ -172,20 +188,22 @@ README: myExec()
 */
 int	myExec(char** args, int numArgs)
 {
-	pid_t pid;
+	int errnum;
+	pid_t pid, waitingpid;
 	int status;
 
 	pid = fork();
 	if (pid == 0){
 		if(execve(args[0], args, environ) < 0){
-			printf("could not run: %s\n", args[0]);
+			errnum = errno;
+			fprintf(stderr, "- myshell: %s: %s\n", args[0], strerror(errnum));
 			exit(1);
 		}
 	}
 	else{
 
 		do{
-			waitpid(pid, &status, WUNTRACED);
+			waitingpid = waitpid(pid, &status, WUNTRACED);
 		} while( !WIFEXITED(status) && !WIFSIGNALED(status));
 
 		//printf("parent: %d\n", getpid());
