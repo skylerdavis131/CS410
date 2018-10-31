@@ -1,0 +1,12 @@
+Helloworld doesnt allways run on consecutive runs in ./myshell
+
+.c and .h files are being interpereted as execcutables?
+
+Lab Notes:
+	+ Check all stat, lstat, and fstat varaitions to find what they do.
+	+ Read the fork() man pages
+		+ What features are/arent inherited from the parent?
+	+ whenever we exit the shell, clean up the child processes
+	+ User defined signals: SIGUSR1 and SIGUSR2
+	+ Kill() is used to send a signal to any process
+	+ read signal() man pages

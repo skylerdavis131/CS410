@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "shellFuncs.h"
 
@@ -41,9 +42,15 @@ int main(){
 	memset(childID, 0, sizeof(int)* numChildren);
 
 
-
+	int a = 0;
 	/*shell loop | exits when user types ctrl+d*/
 	while(1){
+		a++;
+		/*shell prompt*/
+		if(isatty(STDIN_FILENO))
+			write(1, "myshell> ", strlen("myshell> ") );
+
+		/*get input from terminal command line*/
 		input = getCommand();
 
 		//simple exit check. Should I delete this?
@@ -57,11 +64,16 @@ int main(){
 			free(input);
 			continue;
 		}
+		else if (strcmp(input, "\0") == 0){
+			free(input);
+			continue;
+		}
 
 		/*make a pointer to numArgs so it can 
 		  be incremented inside of the myParse Function*/
 		numArgs = 0;
 		numArgs_p = &numArgs;
+		//printf(" ")
 
 
 		args = myParse(input, numArgs_p);
@@ -70,7 +82,7 @@ int main(){
 /*		int i, j;
 		int lineLen = strlen(input) + 1;
 		for(i = 0;i < numArgs; i++ ){
-			printf("%s with null at index: ", args[i]);
+			printf("%s  | with null at index: ", args[i]);
 			for(j = 0; j < lineLen; j++ ){
 				if (args[i][j] == '\0'){
 					printf("%d\n", j);
@@ -79,8 +91,8 @@ int main(){
 			}
 		}
 		printf("\n");
-		
-*/
+*/		
+
 		executeStat = myExec(args, numArgs);
 
 
