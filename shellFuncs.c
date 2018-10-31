@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include "shellFuncs.h"
 
@@ -47,9 +48,10 @@ char* getCommand(void)
 	}
 	memset(lineBuff, 0, buffsize);
 
-	/*Shell prompt*/
+	/*Shell prompt
 	if(isatty(STDIN_FILENO))
 		printf("myshell> ");
+	*/
 
 	/*get the line and check for termination & buffer overflow*/
 	while(1){
@@ -67,6 +69,8 @@ char* getCommand(void)
 				else{
 					/*we must do some stuff before exiting*/
 					/*can we assume that the EOF will be on its own line?*/
+					lineBuff[index] = '\0';
+					return lineBuff;
 				}
 			}
 			printf("\n");
@@ -191,23 +195,41 @@ int	myExec(char** args, int numArgs)
 	int errnum;
 	pid_t pid, waitingpid;
 	int status;
+	struct stat statbuff;
 
-	pid = fork();
-	if (pid == 0){
-		if(execve(args[0], args, environ) < 0){
+	if(stat(args[0], &statbuff) < 0){
+		/*not an existing file*/
+		errnum = errno;
+		fprintf(stderr, "- myshell: %s: %s\n", args[0], strerror(errnum));
+	}
+	else if(statbuff.st_mode & S_IXUSR){
+		pid = fork();
+		if (pid < 0){
 			errnum = errno;
-			fprintf(stderr, "- myshell: %s: %s\n", args[0], strerror(errnum));
-			exit(1);
+			fprintf(stderr, "- myshell: error forking | %s\n", strerror(errnum));
+		}
+		else if (pid == 0){
+			/*Child, so lets try to start the user specified process*/
+			if(execve(args[0], args, environ) < 0){
+				errnum = errno;
+				fprintf(stderr, "- myshell: %s: %s\n", args[0], strerror(errnum));
+				free(args);
+				exit(EXIT_FAILURE);
+			}
+		}
+		else{
+			/*Parent, lets wait for the child to terminate*/
+
+			do{
+				waitingpid = waitpid(pid, &status, WUNTRACED);
+			} while( !WIFEXITED(status) && !WIFSIGNALED(status));
+
+			//printf("parent: %d\n", getpid());
+			
 		}
 	}
 	else{
-
-		do{
-			waitingpid = waitpid(pid, &status, WUNTRACED);
-		} while( !WIFEXITED(status) && !WIFSIGNALED(status));
-
-		//printf("parent: %d\n", getpid());
-		
+		fprintf(stderr, "- myshell: %s: could not run as executable\n", args[0]);
 	}
 
 	return 0;
