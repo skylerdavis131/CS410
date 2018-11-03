@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 #include "shellFuncs.h"
 
@@ -191,35 +193,69 @@ char** myParse(char* line, int* numArgs){
 
 int executeCommands(char** args, int numArgs){
 
+	char* command;
+	char* commandParam;
+
 	int i;
 	int j;
 	for(i = 0; i < numArgs; i++){
 		/*Loop over every argument to execute*/
+
+		/*comArgs holds the arguments for each command*/
 		char** comArgs = (char**)malloc(numArgs * sizeof(char*));
 		memset(comArgs, 0, numArgs*sizeof(char*));
 		
 		j = 0;
 		while(i < numArgs){
-			if( strcmp(args[i], ";") != 0 ){
+			if( strcmp(args[i], ";") != 0 && strcmp(args[i], ">") != 0 &&
+				strcmp(args[i], "1>") != 0 && strcmp(args[i], "2>") != 0 && 
+				strcmp(args[i], "&>") != 0 && strcmp(args[i], "<") != 0){
+				/*Fill in the commArgs array*/
 				comArgs[j] = args[i];
 			}
 			else{
-				myExec(comArgs);
-				break;
+				/*Determine which command was found and exec accordingly*/
+				if( strcmp(args[i], ";") == 0 ){
+					/*if command is ';' we are executing concurrent commands' */
+					myExec(comArgs, args[i], NULL);
+					break;
+				}
+				else if( strcmp(args[i], ">") == 0  || strcmp(args[i], "1>") == 0 ||
+						 strcmp(args[i], "2>") == 0 || strcmp(args[i], "&>") == 0 ||
+						 strcmp(args[i], "<") == 0 ){
+					/*we are redirecting input/output/error to/from next argument file (commandParam)*/
+					command = args[i];
+					i++;
+					commandParam = args[i];
+					myExec(comArgs, command, commandParam);
+
+					/*check if there are more arguments*/
+					if(i+1 < numArgs)
+						if( strcmp(args[i + 1], ";") == 0 )
+							i++; /*skip over the semi colon*/
+						
+					break;
+				}
+
+				
 			}
 
 			j++;
 			i++;
 			if(i >= numArgs){
-				myExec(comArgs);
+				/*underscores are signals to myExec that there is
+				  no redirection of stdin, stdout, or stderr*/
+				myExec(comArgs, "_", "_");
 				break;
 			}
 
 		}
+
+		/*free dynamically allocated comArgs array*/
 		free(comArgs);
 
 			
-		}
+	}
 
 	return 0;
 }
@@ -231,9 +267,9 @@ README: myExec()
 		number that we want to execute
 	+ Program will return the status of the execution.
 */
-int	myExec(char** args)
+int	myExec(char** args, char* command, char* commandParam )
 {
-
+	int fd;
 	int errnum;
 	pid_t pid, waitingpid;
 	int status;
@@ -252,6 +288,55 @@ int	myExec(char** args)
 		}
 		else if (pid == 0){
 			/*Child, so lets try to start the user specified process*/
+
+			/*check for io manipulation*/
+			if(strcmp(command, ">") == 0){
+				/*redirect stdout to file commandParam*/
+				if ( (fd = open(commandParam, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)) < 0 ){
+					/*error opening the file*/
+					errnum = errno;
+					fprintf(stderr, "- myshell: couldnt open file: %s | %s \n", commandParam, strerror(errnum));
+					exit(EXIT_FAILURE);
+				}
+				dup2(fd, 1);
+				close(fd);
+			}
+			else if (strcmp(command, "1>") == 0){
+				/*redirect stdout to file commandParam*/
+				if ( (fd = open(commandParam, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)) < 0 ){
+					/*error opening file*/
+					errnum = errno;
+					fprintf(stderr, "- myshell: couldnt open file: %s | %s \n", commandParam, strerror(errnum));
+					exit(EXIT_FAILURE);
+				}
+				dup2(fd, 1);
+				close(fd);
+			}
+			else if (strcmp(command, "2>") == 0){
+				/*redirect stderr to file commandParam*/
+				if ( (fd = open(commandParam, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)) < 0 ){
+					/*error opening file*/
+					errnum = errno;
+					fprintf(stderr, "- myshell: couldnt open file: %s | %s \n", commandParam, strerror(errnum));
+					exit(EXIT_FAILURE);
+				}
+				dup2(fd, 2);
+				close (fd);
+			}
+			else if (strcmp(command, "<") == 0){
+				/*redirect stdin from file commandParam*/
+				if ( (fd = open(commandParam, O_RDWR, S_IRUSR)) < 0 ){
+					/*error opening file*/
+					errnum = errno;
+					fprintf(stderr, "- myshell: couldnt open file: %s | %s \n", commandParam, strerror(errnum));
+					exit(EXIT_FAILURE);
+				}
+				dup2(fd, 0);
+				close (fd);
+			}
+
+
+			/*execute the program*/
 			if(execve(&args[0][0], args, environ) < 0){
 				errnum = errno;
 				fprintf(stderr, "- myshell: %s: %s\n", args[0], strerror(errnum));
@@ -271,7 +356,7 @@ int	myExec(char** args)
 		}
 	}
 	else{
-		fprintf(stderr, "- myshell: %s: could not run as executable\n", args[0]);
+		fprintf(stderr, "- myshell: %s: cant execute this file\n", args[0]);
 	}
 
 	return 0;

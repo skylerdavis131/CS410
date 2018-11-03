@@ -1,5 +1,1 @@
-Does our shell need to know how to compile the matmult_p.c and matmult_t.c programs or will these functions already be compiled before running the shell program?
-
-Can we assume that EOF is one its own line when input to myshell is piped from another file, or should we check for this?
-
-Why can't I just use execvp instead of execve?
+when redirecting io to/from a file, should we clear the file first or append to the file?

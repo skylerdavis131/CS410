@@ -9,6 +9,6 @@
 
 	int executeCommands(char** args, int numArgs);
 
-	int	myExec(char** args);
+	int	myExec(char** args, char* command, char* commandParam);
 
 #endif
