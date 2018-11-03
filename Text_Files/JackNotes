@@ -10,3 +10,80 @@ Lab Notes:
 	+ User defined signals: SIGUSR1 and SIGUSR2
 	+ Kill() is used to send a signal to any process
 	+ read signal() man pages
+
+
+SHELL EXECUTE LOOP SUDO CODE:
+i = 0;
+nT = 0; //oldest namedToken index we have yet to execute
+while(args[i] != '/0') //loop through each commandline argument
+	Find the next command token
+
+	if(no command tokens)
+		execute on args[0] with the argument array of the entire args
+			array
+		shell should wait for exec to stop before continueing
+		update nT
+
+	else if(command token == ';')
+		execute on args[nT] with an argument array of all arguments
+			between nT and i == ';'
+		shell should wait for exec to stop before continueing
+		update nT
+
+	else if(command token == '>' )
+		exec( args[nT] ) with an argument array of all arguments between
+			nT and i== '>'
+			+ redirect stdout to file with name at args[i + 1]
+		shell should wait for exec to stop before continueing
+		update nT
+
+	else if(command token == '1>')
+		exec( args[nT] ) with an argument array of all arguments between
+			nT and i== '1>'
+			+ redirect stdout to file with name at args[i + 1]
+		shell should wait for exec to stop before continueing
+		update nT
+
+	else if(command token == '2>')
+		exec( args[nT] ) with an argument array of all arguments between
+			nT and i== '2>'
+			+ redirect stderr to file with name at args[i + 1]
+		shell should wait for exec to stop before continueing
+		update nT
+
+	else if(command token == '&>')
+		exec( args[nT] ) with an argument array of all arguments between
+			nT and i== '&>'
+			+ redirect stderr and stdout to file with name at args[i + 1]
+		shell should wait for exec to stop before continueing
+		update nT
+
+	else if(command token == '<')
+		exec( args[nT] ) with an argument array of all arguments between
+			nT and i== '<'
+			+ take stdin from the file with name at args[i + 1] instead
+				of taking input from terminal
+		shell should wait for exec to stop before continueing
+		update nT
+
+	else if(command token == '|')
+		exec( args[nT] ) with an argument array of all arguments between
+			nT and i== '|'
+		pipe the output of args[nT] into the input of args[i + 1]
+		shell should wait for exec to stop before continueing
+		update nT;
+
+	else if(command token == '&')
+		exec( args[nT] ) with an argument array of all arguments between
+			nT and i== '|'
+		process should run in background, ie shell doesnt wait for exec
+			to finish before continuing
+		update nT
+
+	else
+		DETERMINE SOME DEFAULT ACTION
+
+
+	i++
+
+

@@ -7,6 +7,8 @@
 
 	char** myParse(char* line, int* numArgs);
 
-	int	myExec(char** args, int numArgs);
+	int executeCommands(char** args, int numArgs);
+
+	int	myExec(char** args);
 
 #endif

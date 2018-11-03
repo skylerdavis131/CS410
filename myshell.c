@@ -32,7 +32,6 @@ int main(){
 	char** args;
 	int i, numArgs;
 	int* numArgs_p;
-	int executeStat;
 
 
 	/*set up the golobal childID array to hold the 
@@ -42,13 +41,8 @@ int main(){
 	memset(childID, 0, sizeof(int)* numChildren);
 
 
-	int a = 0;
 	/*shell loop | exits when user types ctrl+d*/
 	while(1){
-		a++;
-		/*shell prompt*/
-		if(isatty(STDIN_FILENO))
-			write(1, "myshell> ", strlen("myshell> ") );
 
 		/*get input from terminal command line*/
 		input = getCommand();
@@ -93,7 +87,7 @@ int main(){
 		printf("\n");
 */		
 
-		executeStat = myExec(args, numArgs);
+		executeCommands(args, numArgs);
 
 
 

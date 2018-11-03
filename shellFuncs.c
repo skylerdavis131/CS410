@@ -48,10 +48,10 @@ char* getCommand(void)
 	}
 	memset(lineBuff, 0, buffsize);
 
-	/*Shell prompt
+	/*shell prompt*/
 	if(isatty(STDIN_FILENO))
-		printf("myshell> ");
-	*/
+		write(1, "myshell> ", strlen("myshell> ") );
+
 
 	/*get the line and check for termination & buffer overflow*/
 	while(1){
@@ -180,18 +180,60 @@ char** myParse(char* line, int* numArgs){
 		}
 	}
 
+	/*Last argument must be NULL termination*/
+	args[*numArgs] = NULL;
+
+
 	return args;
+}
+
+
+
+int executeCommands(char** args, int numArgs){
+
+	int i;
+	int j;
+	for(i = 0; i < numArgs; i++){
+		/*Loop over every argument to execute*/
+		char** comArgs = (char**)malloc(numArgs * sizeof(char*));
+		memset(comArgs, 0, numArgs*sizeof(char*));
+		
+		j = 0;
+		while(i < numArgs){
+			if( strcmp(args[i], ";") != 0 ){
+				comArgs[j] = args[i];
+			}
+			else{
+				myExec(comArgs);
+				break;
+			}
+
+			j++;
+			i++;
+			if(i >= numArgs){
+				myExec(comArgs);
+				break;
+			}
+
+		}
+		free(comArgs);
+
+			
+		}
+
+	return 0;
 }
 
 
 /*
 README: myExec()
-	+ This function takes in an array of string arguments and the number
-		of arguments, then executes the argument commands as needed.
+	+ This function takes in an array of string arguments and the argument 
+		number that we want to execute
 	+ Program will return the status of the execution.
 */
-int	myExec(char** args, int numArgs)
+int	myExec(char** args)
 {
+
 	int errnum;
 	pid_t pid, waitingpid;
 	int status;
@@ -210,7 +252,7 @@ int	myExec(char** args, int numArgs)
 		}
 		else if (pid == 0){
 			/*Child, so lets try to start the user specified process*/
-			if(execve(args[0], args, environ) < 0){
+			if(execve(&args[0][0], args, environ) < 0){
 				errnum = errno;
 				fprintf(stderr, "- myshell: %s: %s\n", args[0], strerror(errnum));
 				free(args);
