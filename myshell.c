@@ -1,5 +1,5 @@
 /*
-	Code by Jack Belmont & Skyler Davis
+	Code by Jack Belmont & Skyler Davis & Varun
 	Class: CS410
 	Professor: Rich West
 	Project: a2

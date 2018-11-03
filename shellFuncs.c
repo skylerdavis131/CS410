@@ -198,6 +198,12 @@ int executeCommands(char** args, int numArgs){
 
 	int i;
 	int j;
+	if (numArgs <= 1){
+		myExec(args, "_", "_");
+		return 0;
+	}
+
+
 	for(i = 0; i < numArgs; i++){
 		/*Loop over every argument to execute*/
 
@@ -217,7 +223,7 @@ int executeCommands(char** args, int numArgs){
 				/*Determine which command was found and exec accordingly*/
 				if( strcmp(args[i], ";") == 0 ){
 					/*if command is ';' we are executing concurrent commands' */
-					myExec(comArgs, args[i], NULL);
+					myExec(comArgs, args[i], "_");
 					break;
 				}
 				else if( strcmp(args[i], ">") == 0  || strcmp(args[i], "1>") == 0 ||
@@ -321,6 +327,18 @@ int	myExec(char** args, char* command, char* commandParam )
 					exit(EXIT_FAILURE);
 				}
 				dup2(fd, 2);
+				close (fd);
+			}
+			else if (strcmp(command, "&>") == 0){
+				/*redirect stderr and stdout to file commandParam*/
+				if ( (fd = open(commandParam, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)) < 0 ){
+					/*error opening file*/
+					errnum = errno;
+					fprintf(stderr, "- myshell: couldnt open file: %s | %s \n", commandParam, strerror(errnum));
+					exit(EXIT_FAILURE);
+				}
+				dup2(fd, 2);
+				dup2(fd, 1);
 				close (fd);
 			}
 			else if (strcmp(command, "<") == 0){
