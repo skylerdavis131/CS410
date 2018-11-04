@@ -1,1 +1,3 @@
-when redirecting io to/from a file, should we clear the file first or append to the file?
+when redirecting output to a file, should we clear the file first or append to the file?
+
+When freeing dynamically allocated 2d and 3d arrays, do I have to iterate over them all?
