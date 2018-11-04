@@ -1,4 +1,5 @@
 hi freind
 helowowo
 shellFuncs.h
-helloworld
+helloworld > output.txt
+adder < input.txt

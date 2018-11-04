@@ -1,6 +1,4 @@
-Helloworld doesnt allways run on consecutive runs in ./myshell
 
-.c and .h files are being interpereted as execcutables?
 
 Lab Notes:
 	+ Check all stat, lstat, and fstat varaitions to find what they do.

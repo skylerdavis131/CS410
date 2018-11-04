@@ -269,8 +269,8 @@ int executeCommands(char** args, int numArgs){
 
 /*
 README: myExec()
-	+ This function takes in an array of string arguments and the argument 
-		number that we want to execute
+	+ This function takes in an array of string arguments, a command, and a commandParam
+		+ command is < > 1> 2> &> _. underscore means that no command was specified.
 	+ Program will return the status of the execution.
 */
 int	myExec(char** args, char* command, char* commandParam )
