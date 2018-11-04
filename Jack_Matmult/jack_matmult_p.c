@@ -42,6 +42,7 @@ char* intToString(int input)
   for (j = 0; j < size; j++){
     returnString[size - 1 - j] = intStr[j];
   }
+  free(intStr);
 
   return returnString;
 }
