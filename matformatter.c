@@ -8,13 +8,20 @@
 
 int main()
 {
-	int numArgs = 0;
-	int* numArgs_p = &numArgs;
-	int* vec = getVec(numArgs_p);
+	int n = 0;
+	int m = 0;
+	int* np = &n;
+	int* mp = &m;
 
-	int i;
-	for(i = 0; i<numArgs; i++){
-		printf("%d\n", vec[i]);
+	int** mat = getMat(np, mp);
+
+	int i, j;
+	for(int i = 0; i < m; i++){
+		for(j = 0; j < n; j++){
+			printf("%d ", mat[j][i]);
+		}
+		printf("\n");
 	}
+	
 	return 0;
 }

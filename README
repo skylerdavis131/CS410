@@ -1,0 +1,9 @@
+Project completed by Jack Belmont, Skyler Davis, Varun Lalwani
+
+to run program type "make" at the command prompt and run ./myshell
+
+readMat.h:
+	+ File has functions for reading a 1D array (getVec()) or a 2D array (getMat()) from the command line. 
+	+ File also has functions for converting strings to ints and ints to strings. 
+	+ Functions in this file are used by using #include "readMat.h"j
+

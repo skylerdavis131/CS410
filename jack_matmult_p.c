@@ -187,21 +187,21 @@ int main()
 	char* execArgs[2] = {arg1, arg2};
 
 	//Shared Memory: 
-	// key_t key = 'm';
+	// key_t key = ftok(".", 'b');
 	// int shmMatid;
 	// int** shmMat;
-	// shmMatid = shmget(key, sizeof(*int[n]), IPC_CREAT);
+	// shmMatid = shmget(key, n * p * sizeof(int), IPC_CREAT | IPC_EXCL);
 	// if(shmMatid == -1){
 	// 	fprintf(stderr,"-matmult_p: error with shmget() | %s\n", strerror(errno));
 	// 	exit(EXIT_FAILURE);
 	// }
-	// else{ /*create the shared memory segment*/
-	// 	shmMat = shmat(shmMatid, 0, 0);
-	// 	shmMat[0] = 1;
-	// 	shmMat[1] = 2;
-	// 	shmMat[2] = 3;
-	// 	shmMat[3] = 4;
+	// shmMat = (int**)shmat(shmMatid, 0, 0);
+	// for(i = 0; i < n; i++){
+	// 	for(j = 0; j < p; j++){
+	// 		shmMat[i][j] = 0;
+	// 	}
 	// }
+	
 
 	int k;
 	int childResult;
