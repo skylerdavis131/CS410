@@ -188,7 +188,7 @@ int main()
 	char* arg2 = NULL;
 	char* execArgs[2] = {arg1, arg2};
 
-	//Shared Memory: 
+	//Shared Memory: ////////////////
 	// int shmMatid;
 	// int* shmMat;
 	// int shmMatNumElements = n*p*sizeof(int);
@@ -211,6 +211,8 @@ int main()
 	// 	printf("%d ",*(shmMat + i));
 	// }
 	// printf("\n");
+
+	//////////////////////////
 	
 
 	int k;
@@ -218,6 +220,9 @@ int main()
 	char parentResult[2048];
 	for(i = 0; i < n; i++){ //create one process for each 
 		for(j = 0; j < p; j++){
+
+
+			//No exec calls:
 
 			// /*open pipe for proccess communication*/
 			// if( pipe(pipeCtoP[i][j]) < 0){
@@ -259,6 +264,7 @@ int main()
 
 
 
+			//Exec call with comunication via pipes:
 
 			/*open pipes for proccess communication*/
 			if( pipe(pipeCtoP[i][j]) < 0){
