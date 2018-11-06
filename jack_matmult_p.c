@@ -98,12 +98,14 @@ int main()
 	// 					 {9 , 10},
 	// 					 {11 , 12}};
 
+	//read in first matrix
 	int n = 0;
 	int* np = &n;
 	int m1 = 0;
 	int* m1p = &m1;
 	int** mat1 = getMat(np, m1p);
 
+	//read in second matrix
 	int m2 = 0;
 	int* m2p = &m2;
 	int p = 0;
@@ -187,20 +189,28 @@ int main()
 	char* execArgs[2] = {arg1, arg2};
 
 	//Shared Memory: 
-	// key_t key = ftok(".", 'b');
 	// int shmMatid;
-	// int** shmMat;
-	// shmMatid = shmget(key, n * p * sizeof(int), IPC_CREAT | IPC_EXCL);
-	// if(shmMatid == -1){
+	// int* shmMat;
+	// int shmMatNumElements = n*p*sizeof(int);
+	// shmMatid = shmget(IPC_PRIVATE, shmMatNumElements, 0600);
+	// if(shmMatid < 0){
 	// 	fprintf(stderr,"-matmult_p: error with shmget() | %s\n", strerror(errno));
 	// 	exit(EXIT_FAILURE);
 	// }
-	// shmMat = (int**)shmat(shmMatid, 0, 0);
-	// for(i = 0; i < n; i++){
-	// 	for(j = 0; j < p; j++){
-	// 		shmMat[i][j] = 0;
-	// 	}
+
+	// shmMat = (int*)shmat(shmMatid, 0, 0);
+	// if(shmMat == (void*)-1){
+	// 	fprintf(stderr, "-matmult_p: error with shmMat() | %s\n", strerror(errno));
+	// 	exit(EXIT_FAILURE);
 	// }
+
+	// for(i = 0; i < n; i++){
+	// 	*(shmMat + i) = 0;
+	// }
+	// for(i = 0; i < n; i++){
+	// 	printf("%d ",*(shmMat + i));
+	// }
+	// printf("\n");
 	
 
 	int k;
