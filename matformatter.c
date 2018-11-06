@@ -16,7 +16,7 @@ int main()
 	int** mat = getMat(np, mp);
 
 	int i, j;
-	for(int i = 0; i < m; i++){
+	for(i = 0; i < m; i++){
 		for(j = 0; j < n; j++){
 			printf("%d ", mat[j][i]);
 		}
