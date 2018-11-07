@@ -33,5 +33,5 @@
 	- example: a simple thread creation and termination
 
 - user-level threads (two reccomended solutions)
-	- system V user-level context switching
-	- nonlocal jumps (sigsetjump, siglongjump, sigaltstack)
+	- system V user-level context switching (not very portable)
+	- nonlocal jumps, more portable (sigsetjump, siglongjump, sigaltstack)
