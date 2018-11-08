@@ -1,4 +1,4 @@
-all: myshell multiply jack_matmult_p matformatter helloworld adder 
+all: myshell multiply jack_matmult_p matformatter helloworld adder varun_matmult_t
 
 myshell: myshell.c shellFuncs.c
 	gcc myshell.c shellFuncs.c -o myshell
@@ -18,9 +18,11 @@ helloworld: helloworld.c
 adder: adder.cpp
 	g++ adder.cpp -o adder
 
+varun_matmult_t: varun_matmult_t.c
+	gcc varun_matmult_t.c -o varun_matmult_t
+
 
 
 
 clean:
 	rm myshell multiply jack_matmult_p matformatter helloworld adder
-	
