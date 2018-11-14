@@ -9,11 +9,11 @@ multiply: multiply.c
 matformatter: matformatter.c
 	gcc matformatter.c -o matformatter
 
-matmult_p: jack_matmult_p.c
-	gcc jack_matmult_p.c -o matmult_p
+matmult_p: matmult_p.c
+	gcc matmult_p.c -o matmult_p
 
-matmult_t: varun_matmult_t.c
-	gcc varun_matmult_t.c -o matmult_t
+matmult_t: matmult_t.c
+	gcc matmult_t.c -o matmult_t
 
 
 
