@@ -1,5 +1,4 @@
-hi freind
-helowowo
-shellFuncs.h
-helloworld > output.txt
-adder < input.txt
+helloworld;
+jack_matmult_p < matIn.txt | matformatter; jack_matmult_p < matIn.txt | matformatter > output.txt;
+helloworld; helloworld; helloworld 
+jack_matmult_p < mat2.txt 

@@ -3,12 +3,20 @@
 
 	#define NORMAL_BUFFSIZE 1024;
 
+	void SIGINT_handler(int sig);
+
+	void SIGCHLD_handler(int sig);
+
+	void removeChildID(int id);
+
 	char* getCommand(void);
 
 	char** myParse(char* line, int* numArgs);
 
-	int executeCommands(char** args, int numArgs);
+	int setUpAndExecute(char** args, int numArgs);
 
-	int	myExec(char** args, char* command, char* commandParam);
+	int powerExec(char** args, int execArgIndex, int numArgs, int background, int inputFd);
+	
+	void doPowerExec(char** args, int background, int inFd, int outFd, int errFd, int pipefd[2], int doPipe);
 
 #endif
