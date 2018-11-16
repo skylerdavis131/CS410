@@ -8,7 +8,7 @@ int ** mat1;
 int ** mat2;
 int ** result;
 char** func_stack;
-int current_id,n,m,p,general_function;
+int current_id,n,m,p;
 int * thread_id;
 //This Function is for Matrix Multiplication
 int varun_vectorMult(int* vec1, int* vec2, int numArgs1, int numArgs2)
@@ -59,6 +59,25 @@ void varun_thread(int i)
 	}
 	// Saves the result in the ouptut Matrix
   result[i/p][i%p] = varun_vectorMult(mat1[i/p],vec,m,m);
+	// Swap context to get the result from every thread
+	if(i < ((n*p)-1))
+	{
+		// Save the current context in the uct_func array and jumps to next thread
+		if(swapcontext(&uct_func[i],&uct_func[i+1]) == -1)
+		{
+			perror("Error with swapcontext :(");
+			exit(EXIT_FAILURE);
+		}
+	}
+	else
+	{
+		// Goes back to the first thread if it is the last thread
+	  if(swapcontext(&uct_func[i],&uct_func[0]) == -1)
+		{
+			perror("Error with swapcontext :(");
+			exit(EXIT_FAILURE);
+		}
+	}
 }
 
 // The function used for creating Thread
@@ -82,23 +101,8 @@ void my_thr_create(void (*func)(int), int thr_id)
 			(uct_func[current_id]).uc_stack.ss_sp = func_stack[current_id];
 			// Stores the size of the stack
 			(uct_func[current_id]).uc_stack.ss_size = sizeof(func_stack[current_id]);
-			// If function is being used for general purpose
-			if(general_function)
-			{
-				(uct_func[current_id]).uc_link = &uct_main;
-			}
-			else // If function is being used for matrix Multiplication
-			{
-				// What we try to approach is that, when the a thread is done doing
-				// it's thread, goes to complete the what is remaining of next thread_id
-				// If it is the last thread, after completion it goes back to main thread
-
-				// If not last thread, the uc_link is set to next thread
-				if(current_id != ((n*p) - 1))
-	        (uct_func[current_id]).uc_link = &uct_func[current_id+1];
-	      else// Else, uc_link is set to main thread
-	        (uct_func[current_id]).uc_link = &uct_main;
-			}
+			// Sets the uc_link to the main thread
+			(uct_func[current_id]).uc_link = &uct_main;
 			// Saves the id in a ID array
 			thread_id[current_id] = thr_id;
 			// Makes context to assign the starting of thread to the start of
@@ -120,9 +124,6 @@ void my_thr_create(void (*func)(int), int thr_id)
 
 int main(int argc, char const *argv[])
 {
-	// if doing matmult_t, general_function should be 0
-	// else the general_function should be 1
-	general_function = 0;
   getcontext(&uct_main);
 	int i;
   // FIND THIS PART DYNAMICALLY FROM COMMAND LINE ///
@@ -174,27 +175,7 @@ int main(int argc, char const *argv[])
 	// Calls my_thr_create function for every thread
   for(i = 0; i < (n*p); i++)
   {
-    /*if(getcontext(&(uct_func[i])) != -1)
-    {
-      (uct_func[i]).uc_stack.ss_sp = func_stack[i];
-      (uct_func[i]).uc_stack.ss_size = sizeof(func_stack[i]);
-			if(i != ((n*p) - 1))
-        (uct_func[i]).uc_link = &uct_func[i+1];
-      else
-        (uct_func[i]).uc_link = &uct_main;
-      //makecontext(&(uct_func[i]), (void(*)(void))varun_thread ,1,i);
-			my_thr_create(varun_thread,i);
-    }
-    else
-    {
-      perror("getcontext fault\n");
-      exit(0);
-    }*/
 		my_thr_create(varun_thread,i);
-		/*if(i != ((n*p) - 1))
-		{
-			(uct_func[i]).uc_link = &uct_func[i+1];
-		}*/
   }
 	// Starts the fun of threadding
 	if(swapcontext(&uct_main,&(uct_func[0])) == -1)
